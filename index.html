@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Погода в Усть-Илимске</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .weather-container {
+            padding: 20px;
+            text-align: center;
+        }
+        .weather-info {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        @media (max-width: 600px) {
+            .weather-container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Погода в Усть-Илимске</h1>
+        <p>Актуальная информация о погоде в вашем городе</p>
+    </div>
+    
+    <div class="weather-container">
+        <div class="weather-info">
+            <h2>Текущая погода</h2>
+            <p><strong>Температура:</strong> <span id="temperature">0°C</span></p>
+            <p><strong>Осадки:</strong> <span id="precipitation">Без осадков</span></p>
+            <p><strong>Влажность:</strong> <span id="humidity">0%</span></p>
+            <p><strong>Ветер:</strong> <span id="wind">0 м/с</span></p>
+        </div>
+        
+        <div class="forecast">
+            <h2>Прогноз на ближайшие дни</h2>
+            <div class="forecast-day">
+                <p><strong>Понедельник:</strong> 15°C, Солнечно</p>
+            </div>
+            <div class="forecast-day">
+                <p><strong>Вторник:</strong> 14°C, Переменная облачность</p>
+            </div>
+            <div class="forecast-day">
+                <p><strong>Среда:</strong> 13°C, Дождь</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Здесь можно добавить код для получения реальных данных о погоде
+        // Например, используя API погоды
+    </script>
+</body>
+</html>
