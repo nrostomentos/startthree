@@ -4,76 +4,523 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Погода в Усть-Илимске</title>
+	<title>🔪 DANGANRONPA | Погода в Усть-Илимске</title>
 	<style>
-		body {
-			font-family: Arial, sans-serif;
+		* {
 			margin: 0;
 			padding: 0;
-			background-color: #f5f5f5;
+			box-sizing: border-box;
 		}
 
-		.header {
-			background-color: #4CAF50;
+		:root {
+			--dr-pink: #e6007a;
+			--dr-red: #b52e2e;
+			--dr-black: #1a1a1a;
+			--dr-white: #f8f8f8;
+			--dr-gray: #2e2e2e;
+			--dr-shadow: rgba(0, 0, 0, 0.3);
+			--gradient-dr: linear-gradient(135deg, #e6007a, #b52e2e);
+		}
+
+		body {
+			font-family: 'Segoe UI', 'Poppins', 'Impact', 'Arial Black', sans-serif;
+			background: #0a0a0a;
+			color: var(--dr-white);
+			min-height: 100vh;
+			position: relative;
+			background-image: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(230, 0, 122, 0.03) 30px, rgba(230, 0, 122, 0.03) 60px);
+		}
+
+		/* Фон с эффектом "крови" */
+		.dr-bg {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: -2;
+			background: radial-gradient(circle at 20% 40%, rgba(230, 0, 122, 0.05), transparent 50%),
+						radial-gradient(circle at 80% 70%, rgba(181, 46, 46, 0.05), transparent 50%);
+		}
+
+		/* Плавающие элементы */
+		.dr-particle {
+			position: fixed;
+			background: var(--dr-pink);
+			border-radius: 50%;
+			filter: blur(8px);
+			opacity: 0.08;
+			animation: floatParticle 20s infinite ease-in-out;
+			z-index: -1;
+		}
+
+		@keyframes floatParticle {
+			0%, 100% { transform: translateY(0) translateX(0); }
+			50% { transform: translateY(-50px) translateX(30px); }
+		}
+
+		/* Контейнер */
+		.dr-container {
+			max-width: 800px;
+			margin: 40px auto;
+			background: rgba(26, 26, 26, 0.92);
+			border-radius: 25px;
+			border: 3px solid var(--dr-pink);
+			box-shadow: 10px 10px 0 var(--dr-black);
+			backdrop-filter: blur(10px);
+			overflow: hidden;
+			position: relative;
+			z-index: 1;
+		}
+
+		/* Заголовок */
+		.dr-header {
+			background: var(--gradient-dr);
+			padding: 40px 30px;
+			text-align: center;
+			position: relative;
+			overflow: hidden;
+			border-bottom: 3px solid var(--dr-black);
+		}
+
+		.dr-header::before {
+			content: '🌡️';
+			position: absolute;
+			font-size: 120px;
+			opacity: 0.15;
+			right: -20px;
+			bottom: -30px;
+			pointer-events: none;
+		}
+
+		.dr-header h1 {
+			font-size: 2.5em;
+			margin-bottom: 15px;
+			text-shadow: 4px 4px 0 var(--dr-black);
+			font-family: 'Impact', 'Arial Black', sans-serif;
+			letter-spacing: 2px;
+		}
+
+		.dr-header p {
+			font-size: 1.1em;
+			text-shadow: 2px 2px 0 var(--dr-black);
+			opacity: 0.95;
+		}
+
+		/* Контент */
+		.dr-content {
+			padding: 40px;
+		}
+
+		/* Карточка погоды */
+		.dr-card {
+			background: rgba(26, 26, 26, 0.8);
+			padding: 30px;
+			border-radius: 20px;
+			margin-bottom: 30px;
+			border: 2px solid var(--dr-pink);
+			box-shadow: 6px 6px 0 var(--dr-black);
+			transition: all 0.2s ease;
+		}
+
+		.dr-card:hover {
+			transform: translate(-2px, -2px);
+			box-shadow: 10px 10px 0 var(--dr-black);
+		}
+
+		.dr-card h2 {
+			font-size: 1.8em;
+			margin-bottom: 25px;
+			color: var(--dr-pink);
+			text-shadow: 2px 2px 0 var(--dr-black);
+			font-family: 'Impact', sans-serif;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			border-left: 4px solid var(--dr-pink);
+			padding-left: 15px;
+		}
+
+		/* Погодные показатели */
+		.weather-grid {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 20px;
+			margin-top: 20px;
+		}
+
+		.weather-item {
+			background: rgba(0, 0, 0, 0.4);
+			padding: 15px;
+			border-radius: 12px;
+			border: 1px solid rgba(230, 0, 122, 0.3);
+			transition: all 0.2s ease;
+		}
+
+		.weather-item:hover {
+			border-color: var(--dr-pink);
+			box-shadow: 0 0 15px rgba(230, 0, 122, 0.2);
+		}
+
+		.weather-item strong {
+			color: var(--dr-pink);
+			font-size: 1.1em;
+			display: block;
+			margin-bottom: 8px;
+		}
+
+		.weather-item span {
+			font-size: 1.3em;
+			font-weight: bold;
+			font-family: monospace;
+		}
+
+		/* Прогноз */
+		.forecast {
+			background: rgba(26, 26, 26, 0.8);
+			padding: 30px;
+			border-radius: 20px;
+			border: 2px solid var(--dr-pink);
+			box-shadow: 6px 6px 0 var(--dr-black);
+			transition: all 0.2s ease;
+		}
+
+		.forecast:hover {
+			transform: translate(-2px, -2px);
+			box-shadow: 10px 10px 0 var(--dr-black);
+		}
+
+		.forecast h2 {
+			font-size: 1.8em;
+			margin-bottom: 25px;
+			color: var(--dr-pink);
+			text-shadow: 2px 2px 0 var(--dr-black);
+			font-family: 'Impact', sans-serif;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			border-left: 4px solid var(--dr-pink);
+			padding-left: 15px;
+		}
+
+		.forecast-day {
+			background: rgba(0, 0, 0, 0.4);
+			padding: 15px 20px;
+			margin-bottom: 12px;
+			border-radius: 12px;
+			border: 1px solid rgba(230, 0, 122, 0.3);
+			transition: all 0.2s ease;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 10px;
+		}
+
+		.forecast-day:hover {
+			border-color: var(--dr-pink);
+			transform: translateX(5px);
+			box-shadow: 0 0 15px rgba(230, 0, 122, 0.2);
+		}
+
+		.forecast-day strong {
+			color: var(--dr-pink);
+			font-size: 1.1em;
+		}
+
+		.forecast-day span {
+			font-family: monospace;
+			font-size: 1.1em;
+		}
+
+		/* Кнопка обновления */
+		.dr-btn {
+			background: var(--gradient-dr);
 			color: white;
+			padding: 15px 35px;
+			border: none;
+			border-radius: 40px;
+			cursor: pointer;
+			font-weight: bold;
+			font-size: 1.1em;
+			box-shadow: 4px 4px 0 var(--dr-black);
+			transition: all 0.1s linear;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			margin-top: 20px;
+			width: 100%;
+			font-family: monospace;
+		}
+
+		.dr-btn:active {
+			transform: translate(2px, 2px);
+			box-shadow: 2px 2px 0 var(--dr-black);
+		}
+
+		.dr-btn:hover {
+			background: linear-gradient(135deg, #ff1a8c, #cc3b3b);
+		}
+
+		/* Футер */
+		footer {
+			margin-top: 20px;
 			padding: 20px;
 			text-align: center;
+			border-top: 2px solid var(--dr-pink);
 		}
 
-		.weather-container {
-			padding: 20px;
-			text-align: center;
+		footer div {
+			display: flex;
+			justify-content: center;
+			gap: 20px;
+			flex-wrap: wrap;
 		}
 
-		.weather-info {
-			background-color: white;
-			padding: 20px;
-			border-radius: 8px;
-			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-			margin: 20px auto;
-			max-width: 600px;
+		.btn-footer {
+			background: var(--gradient-dr);
+			color: white;
+			padding: 10px 25px;
+			border-radius: 40px;
+			text-decoration: none;
+			font-weight: bold;
+			box-shadow: 4px 4px 0 var(--dr-black);
+			transition: all 0.1s linear;
+			display: inline-block;
+			font-size: 0.9em;
 		}
 
+		.btn-footer:active {
+			transform: translate(2px, 2px);
+			box-shadow: 2px 2px 0 var(--dr-black);
+		}
+
+		.btn-footer:hover {
+			background: linear-gradient(135deg, #ff1a8c, #cc3b3b);
+		}
+
+		/* Анимация обновления */
+		@keyframes drPulse {
+			0%, 100% { opacity: 1; }
+			50% { opacity: 0.5; transform: scale(0.98); }
+		}
+
+		.updating {
+			animation: drPulse 0.5s ease;
+		}
+
+		/* Эффект "кровавого" дождя */
+		@keyframes bloodRain {
+			0% { transform: translateY(-100px) rotate(0deg); opacity: 0.6; }
+			100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+		}
+
+		/* Адаптивность */
 		@media (max-width: 600px) {
-			.weather-container {
-				padding: 10px;
+			.dr-container {
+				margin: 20px;
+			}
+			.dr-header h1 {
+				font-size: 1.8em;
+			}
+			.dr-content {
+				padding: 20px;
+			}
+			.weather-grid {
+				grid-template-columns: 1fr;
+				gap: 12px;
+			}
+			.forecast-day {
+				flex-direction: column;
+				text-align: center;
+			}
+			.dr-card h2, .forecast h2 {
+				font-size: 1.4em;
 			}
 		}
 	</style>
 </head>
 
 <body>
-	<div class="header">
-		<h1>Погода в Москве</h1>
-		<p>Актуальная информация о погоде в вашем городе</p>
-	</div>
+	<div class="dr-bg"></div>
+	
+	<!-- Плавающие элементы -->
+	<div class="dr-particle" style="width: 250px; height: 250px; top: -80px; right: -80px;"></div>
+	<div class="dr-particle" style="width: 180px; height: 180px; bottom: 50px; left: -60px; animation-duration: 25s;"></div>
+	<div class="dr-particle" style="width: 120px; height: 120px; top: 40%; right: 5%; animation-duration: 18s;"></div>
 
-	<div class="weather-container">
-		<div class="weather-info">
-			<h2>Текущая погода</h2>
-			<p><strong>Температура:</strong> <span id="temperature">0°C</span></p>
-			<p><strong>Осадки:</strong> <span id="precipitation">Без осадков</span></p>
-			<p><strong>Влажность:</strong> <span id="humidity">0%</span></p>
-			<p><strong>Ветер:</strong> <span id="wind">0 м/с</span></p>
+	<div class="dr-container">
+		<div class="dr-header">
+			<h1>🔪 ПОГОДА В УСТЬ-ИЛИМСКЕ</h1>
+			<p>Академия Надежды | Классный суд погоды</p>
 		</div>
 
-		<div class="forecast">
-			<h2>Прогноз на ближайшие дни</h2>
-			<div class="forecast-day">
-				<p><strong>Понедельник:</strong> 15°C, Солнечно</p>
+		<div class="dr-content">
+			<div class="dr-card">
+				<h2>🌡️ ТЕКУЩАЯ ПОГОДА</h2>
+				<div class="weather-grid">
+					<div class="weather-item">
+						<strong>🌡️ Температура</strong>
+						<span id="temperature">Загрузка...</span>
+					</div>
+					<div class="weather-item">
+						<strong>💧 Осадки</strong>
+						<span id="precipitation">Загрузка...</span>
+					</div>
+					<div class="weather-item">
+						<strong>💨 Влажность</strong>
+						<span id="humidity">Загрузка...</span>
+					</div>
+					<div class="weather-item">
+						<strong>🌬️ Ветер</strong>
+						<span id="wind">Загрузка...</span>
+					</div>
+				</div>
 			</div>
-			<div class="forecast-day">
-				<p><strong>Вторник:</strong> 14°C, Переменная облачность</p>
+
+			<div class="forecast">
+				<h2>📅 ПРОГНОЗ НА БЛИЖАЙШИЕ ДНИ</h2>
+				<div class="forecast-day">
+					<strong>ПОНЕДЕЛЬНИК</strong>
+					<span>🌡️ 15°C | ☀️ Солнечно</span>
+				</div>
+				<div class="forecast-day">
+					<strong>ВТОРНИК</strong>
+					<span>🌡️ 14°C | ⛅ Переменная облачность</span>
+				</div>
+				<div class="forecast-day">
+					<strong>СРЕДА</strong>
+					<span>🌡️ 13°C | 🌧️ Дождь</span>
+				</div>
+				<div class="forecast-day">
+					<strong>ЧЕТВЕРГ</strong>
+					<span>🌡️ 12°C | 🌧️ Небольшой дождь</span>
+				</div>
+				<div class="forecast-day">
+					<strong>ПЯТНИЦА</strong>
+					<span>🌡️ 14°C | ⛅ Облачно</span>
+				</div>
 			</div>
-			<div class="forecast-day">
-				<p><strong>Среда:</strong> 13°C, Дождь</p>
-			</div>
+
+			<button class="dr-btn" id="updateWeather" onclick="updateWeather()">
+				🔪 ОБНОВИТЬ ДАННЫЕ
+			</button>
 		</div>
 	</div>
+
+	<footer>
+		<div>
+			<a href="https://github.com/nrostomentos" class="btn-footer">🐙 GitHub</a>
+			<a href="https://t.me/swn_f" class="btn-footer">📱 Telegram</a>
+		</div>
+		<div style="margin-top: 15px; font-size: 0.7em; opacity: 0.5;">
+			⚡ 希望ヶ峰学園 | SORE WA CHIGAU YO! ⚡
+		</div>
+	</footer>
 
 	<script>
-		// Здесь можно добавить код для получения реальных данных о погоде
-        // Например, используя API погоды
+		// Функция для получения случайных погодных данных (имитация API)
+		function getRandomWeather() {
+			const temperatures = [-15, -12, -10, -8, -5, -3, 0, 2, 5, 8, 10, 12, 15, 18, 20];
+			const precipitations = ['Без осадков', 'Снег', 'Дождь', 'Мокрый снег', 'Град', 'Ливень', 'Метель'];
+			const humidities = [45, 55, 65, 70, 75, 80, 85, 90];
+			const winds = [1, 2, 3, 4, 5, 6, 7, 8, 10, 12];
+			
+			return {
+				temperature: temperatures[Math.floor(Math.random() * temperatures.length)],
+				precipitation: precipitations[Math.floor(Math.random() * precipitations.length)],
+				humidity: humidities[Math.floor(Math.random() * humidities.length)],
+				wind: winds[Math.floor(Math.random() * winds.length)]
+			};
+		}
+
+		// Функция для создания эффекта "кровавого дождя"
+		function createBloodEffect() {
+			const container = document.body;
+			for (let i = 0; i < 15; i++) {
+				setTimeout(() => {
+					const drop = document.createElement('div');
+					drop.style.cssText = `
+						position: fixed;
+						width: ${Math.random() * 4 + 2}px;
+						height: ${Math.random() * 8 + 4}px;
+						background: linear-gradient(180deg, #e6007a, #b52e2e);
+						left: ${Math.random() * 100}vw;
+						top: -20px;
+						animation: bloodRain 1.5s ease-out forwards;
+						pointer-events: none;
+						z-index: 999;
+						opacity: 0.7;
+						border-radius: 2px;
+					`;
+					
+					if (!document.querySelector('#rainStyle')) {
+						const style = document.createElement('style');
+						style.id = 'rainStyle';
+						style.textContent = `
+							@keyframes bloodRain {
+								0% { transform: translateY(-20px) rotate(0deg); opacity: 0.7; }
+								100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+							}
+						`;
+						document.head.appendChild(style);
+					}
+					container.appendChild(drop);
+					setTimeout(() => drop.remove(), 1500);
+				}, i * 80);
+			}
+		}
+
+		// Функция обновления погоды
+		function updateWeather() {
+			const btn = document.getElementById('updateWeather');
+			btn.classList.add('updating');
+			btn.textContent = '🔪 ОБНОВЛЕНИЕ...';
+			
+			// Анимация на кнопке
+			setTimeout(() => {
+				btn.classList.remove('updating');
+			}, 500);
+			
+			// Имитация загрузки с API
+			setTimeout(() => {
+				const weather = getRandomWeather();
+				
+				// Анимированное обновление данных
+				const elements = ['temperature', 'precipitation', 'humidity', 'wind'];
+				elements.forEach(id => {
+					const element = document.getElementById(id);
+					element.style.opacity = '0';
+					setTimeout(() => {
+						if (id === 'temperature') element.textContent = `${weather.temperature}°C`;
+						if (id === 'precipitation') element.textContent = weather.precipitation;
+						if (id === 'humidity') element.textContent = `${weather.humidity}%`;
+						if (id === 'wind') element.textContent = `${weather.wind} м/с`;
+						element.style.opacity = '1';
+					}, 150);
+				});
+				
+				// Эффект "кровавого дождя"
+				createBloodEffect();
+				
+				btn.textContent = '🔪 ОБНОВИТЬ ДАННЫЕ';
+				
+				// Добавляем сообщение в консоль в стиле Danganronpa
+				console.log('%c🔪 ДАННЫЕ ОБНОВЛЕНЫ | SORE WA CHIGAU YO! 🔪', 'color: #e6007a; font-size: 12px; font-weight: bold;');
+			}, 800);
+		}
+
+		// Инициализация при загрузке страницы
+		document.addEventListener('DOMContentLoaded', () => {
+			// Загружаем реальную погоду через API (если доступно)
+			// Или используем случайные данные
+			const initialWeather = getRandomWeather();
+			document.getElementById('temperature').textContent = `${initialWeather.temperature}°C`;
+			document.getElementById('precipitation').textContent = initialWeather.precipitation;
+			document.getElementById('humidity').textContent = `${initialWeather.humidity}%`;
+			document.getElementById('wind').textContent = `${initialWeather.wind} м/с`;
+			
+			console.log('%c🌡️ ПОГОДА ЗАГРУЖЕНА | ДОБРО ПОЖАЛОВАТЬ В АКАДЕМИЮ НАДЕЖДЫ 🌡️', 'color: #e6007a; font-size: 12px; font-weight: bold;');
+		});
 	</script>
 </body>
 
